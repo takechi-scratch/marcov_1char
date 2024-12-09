@@ -6,7 +6,6 @@ import random
 
 import requests
 import streamlit as st
-from pykakasi import kakasi
 from dotenv import load_dotenv
 
 from package.marcov import SingleMarcov
@@ -43,12 +42,6 @@ def fetch_data():
 
 
 def generate_txt(max_length: int = 100, auto_convert: bool = False):
-    # k = kakasi()
-    # # 漢字への変換には非対応
-    # k.setMode("H", "J")
-    # k.setMode("H", "K")
-    # conv = k.getConverter()
-
     text = st.session_state.model.generate_text(max_length=max_length)
     if auto_convert:
         pass
@@ -70,7 +63,7 @@ async def main():
         with st.expander("モデルの準備中です、しばらくお待ちください..."):
             st.session_state.model = SingleMarcov(text=st.session_state.data)
 
-    auto_convert = st.toggle("自動で変換する", False)
+    auto_convert = st.toggle("自動で変換する(準備中)", False)
     start_generate = st.button("生成開始", type="primary")
 
     generate_area = st.container(border=True)
