@@ -34,13 +34,6 @@ st.set_page_config(
 st.title("1文字マルコフ連鎖")
 
 
-def fetch_data():
-    """GASの取得は時間がかかるので、初期化時の1回だけ"""
-    res = requests.get(os.environ["DATA_URL"])
-
-    return res.text
-
-
 def generate_txt(max_length: int = 100, auto_convert: bool = False):
     text = st.session_state.model.generate_text(max_length=max_length)
     if auto_convert:
