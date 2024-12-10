@@ -22,7 +22,7 @@ logger.propagate = False
 
 st.set_page_config(
     page_title="1文字マルコフ連鎖",
-    page_icon="⛓️‍💥",
+    page_icon="💬",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
@@ -34,8 +34,9 @@ st.set_page_config(
 st.title("1文字マルコフ連鎖")
 
 
-def generate_txt(max_length: int = 100, auto_convert: bool = False):
-    text = st.session_state.model.generate_text(max_length=max_length)
+def generate_txt(max_length: int = 100, auto_convert: bool = False, start_sentence: str = ""):
+    text = st.session_state.model.generate_text(max_length=max_length, start_sentence=start_sentence)
+    logger.info(f"テキストを生成しました: {text} {start_sentence}")
     if auto_convert:
         pass
     else:
@@ -55,10 +56,14 @@ async def main():
 
         with st.expander("モデルの準備中です、しばらくお待ちください..."):
             st.session_state.model = SingleMarcov(text=st.session_state.data)
+            st.session_state.made_sentence = "ここにテキストが生成されます"
 
-    auto_convert = st.toggle("自動で変換する(準備中)", False)
+    with st.expander("細かい設定"):
+        max_length = st.slider("生成するテキストの長さ", 10, 1000, 100, 10)
+        st.session_state.start_sentence = st.text_input("はじめの文章", "")
+        auto_convert = st.toggle("自動で変換する(準備中)", False)
+
     start_generate = st.button("生成開始", type="primary")
-
     generate_area = st.container(border=True)
 
     if start_generate:
@@ -68,14 +73,15 @@ async def main():
             with st.spinner("生成中..."):
                 if auto_convert:
                     text = st.markdown("")
-                    for generating_text in generate_txt(auto_convert=True):
+                    for generating_text in generate_txt(max_length=max_length, auto_convert=True, start_sentence=st.session_state.start_sentence):
                         text.text = generating_text
                 else:
-                    st.write_stream(generate_txt)
+                    generator = generate_txt(max_length=max_length, start_sentence=st.session_state.start_sentence)
+                    st.session_state.made_sentence = st.write_stream(generator)
 
             status.caption("生成完了")
     else:
-        generate_area.caption("ここにテキストが生成されます")
+        generate_area.write(st.session_state.made_sentence)
 
 
 asyncio.run(main())

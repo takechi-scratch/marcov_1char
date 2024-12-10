@@ -35,8 +35,12 @@ class SingleMarcov:
             if i + 1 < len(text):
                 self.model[char].append(text[i + 1])
 
-    def generate_text(self, *, max_length: int = None):
-        text = random.choice(list(self.model.keys()))
+    def generate_text(self, *, max_length: int = None, start_sentence: str = "") -> str:
+        print(start_sentence)
+        if len(start_sentence) > 0:
+            text = start_sentence
+        else:
+            text = random.choice(list(self.model.keys()))
 
         while not max_length or len(text) < max_length:
             if len(self.model[text[-1]]) <= 0:
