@@ -50,8 +50,8 @@ async def main():
     # 初期設定
     if "data" not in st.session_state:
         with st.spinner("データを取得中です、しばらくお待ちください..."):
-            res = requests.get(os.environ["DATA_URL"])
-            st.session_state.data = res.content.decode("utf-8")
+            with open("webmania_thread.txt", "r", encoding="utf-8") as f:
+                st.session_state.data = f.read()
             logger.debug(st.session_state.data)
 
         with st.expander("モデルの準備中です、しばらくお待ちください..."):
